@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 3 ]; then
-  echo "Usage: ./sell20 SYMBOL QTY SELL_PRICE" >&2
+if [ "$#" -lt 3 ] || [ "$#" -gt 4 ]; then
+  echo "Usage: ./sell20 SYMBOL QTY SELL_PRICE [MIS|NRML]" >&2
   echo "Example: ./sell20 SENSEX2651475400CE 20 15" >&2
+  echo "After MIS cutoff: ./sell20 SENSEX2651475400CE 20 15 NRML" >&2
   exit 2
 fi
 
@@ -21,4 +22,5 @@ exec "$PYTHON" -m src.sell_option_with_sl \
   --symbol "$1" \
   --qty "$2" \
   --sell "$3" \
+  ${4:+--product "$4"} \
   --stop-loss-percent 20
