@@ -38,6 +38,16 @@ For a bought option position, place a protective sell SL-LIMIT order. The trigge
 python -m src.place_stop_loss_order --exchange BFO --symbol SENSEX2651475400CE --quantity 20 --trigger-price 13 --limit-price 12.95 --side SELL
 ```
 
+## Option Sell With Buy SL
+
+For a short option trade, use one command. It sells the option with a LIMIT order, waits for the sell entry to complete, then places the protective BUY SL-LIMIT order.
+
+```bash
+python -m src.sell_option_with_sl --exchange BFO --symbol SENSEX2651475400CE --qty 20 --sell 15 --sl 18
+```
+
+If `--sl-limit` is omitted, it defaults to one tick above the trigger. With `--sl 18`, the BUY SL-LIMIT order uses trigger `18` and limit `18.05`.
+
 ## Live Order Guard
 
 Live orders require all of these in `.env`:
