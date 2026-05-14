@@ -1,6 +1,6 @@
 # Zerodha Kite Algo Workspace
 
-This is the Zerodha-only workspace for the options trading bot. It keeps broker credentials out of source control and defaults every order path to dry run.
+This is the Zerodha-only workspace for the options trading bot. It keeps broker credentials out of source control, defaults every order path to dry run, and uses `NRML` product by default.
 
 ## Setup
 
@@ -48,12 +48,6 @@ For a short option trade, use the short wrapper. It sells the option with a LIMI
 
 With sell price `15`, the BUY stop loss is trigger `18` and limit `18.05`.
 
-After the MIS intraday cutoff, pass `NRML` as the fourth argument:
-
-```bash
-./sell20 SENSEX2651475400CE 20 15 NRML
-```
-
 The longer command also works when you want a custom stop loss:
 
 ```bash
@@ -69,12 +63,6 @@ For a long option trade, use the matching buy wrapper. It buys the option with a
 ```
 
 With buy price `15`, the SELL stop loss is trigger `12` and limit `11.95`.
-
-After the MIS intraday cutoff, pass `NRML` as the fourth argument:
-
-```bash
-./buy20 SENSEX2651475400CE 20 15 NRML
-```
 
 In live mode, automatic stop loss is calculated from the actual executed average price, not just the submitted limit price.
 
