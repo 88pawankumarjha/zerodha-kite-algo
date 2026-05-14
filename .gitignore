@@ -1,0 +1,31 @@
+.DS_Store
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local runtime files
+.env
+.env.*
+!.env.example
+.kite_access_token
+data/*.csv
+data/*.csv.gz
+logs/
+*.log
+
+# Secrets and keys
+secrets/
+.secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# Notebooks
+.ipynb_checkpoints/
