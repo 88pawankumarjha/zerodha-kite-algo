@@ -12,6 +12,7 @@ from .kite_client import build_kite_client
 
 
 TERMINAL_FAILURE_STATUSES = {"REJECTED", "CANCELLED"}
+DEFAULT_STOP_LOSS_PERCENT = 20.0
 
 
 def round_to_tick(value: float, tick_size: float) -> float:
@@ -36,9 +37,16 @@ def build_entry_payload(args: argparse.Namespace) -> dict[str, Any]:
 
 def build_stop_loss_payload(args: argparse.Namespace) -> dict[str, Any]:
     settings = load_settings()
+    trigger_price = args.sl_trigger
+    if trigger_price is None:
+        trigger_price = round_to_tick(
+            args.sell_price * (1 + args.stop_loss_percent / 100),
+            args.tick_size,
+        )
+
     limit_price = args.sl_limit
     if limit_price is None:
-        limit_price = round_to_tick(args.sl_trigger + args.tick_size, args.tick_size)
+        limit_price = round_to_tick(trigger_price + args.tick_size, args.tick_size)
 
     return {
         "variety": settings.default_variety,
@@ -49,7 +57,7 @@ def build_stop_loss_payload(args: argparse.Namespace) -> dict[str, Any]:
         "product": args.product or settings.default_product,
         "order_type": KiteConnect.ORDER_TYPE_SL,
         "price": limit_price,
-        "trigger_price": args.sl_trigger,
+        "trigger_price": trigger_price,
         "validity": settings.default_validity,
         "tag": settings.default_tag,
     }
@@ -102,8 +110,9 @@ def main() -> None:
     parser.add_argument("--symbol", required=True, help="Exchange tradingsymbol, for example SENSEX...")
     parser.add_argument("--quantity", "--qty", required=True, type=int)
     parser.add_argument("--sell-price", "--sell", required=True, type=float)
-    parser.add_argument("--sl-trigger", "--sl", required=True, type=float)
+    parser.add_argument("--sl-trigger", "--sl", type=float, default=None)
     parser.add_argument("--sl-limit", type=float, default=None)
+    parser.add_argument("--stop-loss-percent", "--sl-percent", type=float, default=DEFAULT_STOP_LOSS_PERCENT)
     parser.add_argument("--tick-size", type=float, default=0.05)
     parser.add_argument("--exchange", default=None)
     parser.add_argument("--product", default=None)

@@ -40,13 +40,19 @@ python -m src.place_stop_loss_order --exchange BFO --symbol SENSEX2651475400CE -
 
 ## Option Sell With Buy SL
 
-For a short option trade, use one command. It sells the option with a LIMIT order, waits for the sell entry to complete, then places the protective BUY SL-LIMIT order.
+For a short option trade, use the short wrapper. It sells the option with a LIMIT order, waits for the sell entry to complete, then places the protective BUY SL-LIMIT order with a 20% stop loss.
+
+```bash
+./sell20 SENSEX2651475400CE 20 15
+```
+
+With sell price `15`, the BUY stop loss is trigger `18` and limit `18.05`.
+
+The longer command also works when you want a custom stop loss:
 
 ```bash
 python -m src.sell_option_with_sl --exchange BFO --symbol SENSEX2651475400CE --qty 20 --sell 15 --sl 18
 ```
-
-If `--sl-limit` is omitted, it defaults to one tick above the trigger. With `--sl 18`, the BUY SL-LIMIT order uses trigger `18` and limit `18.05`.
 
 ## Live Order Guard
 
