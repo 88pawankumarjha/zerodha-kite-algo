@@ -63,6 +63,17 @@ def build_stop_loss_payload(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
+def completed_average_price(order_status: dict[str, Any], fallback_price: float) -> float:
+    value = order_status.get("average_price")
+    if value in (None, "", 0, 0.0, "0", "0.0"):
+        return fallback_price
+
+    price = float(value)
+    if price <= 0:
+        return fallback_price
+    return price
+
+
 def validate_prices(entry: dict[str, Any], stop_loss: dict[str, Any]) -> None:
     sell_price = float(entry["price"])
     trigger_price = float(stop_loss["trigger_price"])
@@ -122,10 +133,10 @@ def main() -> None:
 
     settings = load_settings()
     entry_payload = build_entry_payload(args)
-    stop_loss_payload = build_stop_loss_payload(args)
-    validate_prices(entry_payload, stop_loss_payload)
 
     if not settings.can_place_live_orders:
+        stop_loss_payload = build_stop_loss_payload(args)
+        validate_prices(entry_payload, stop_loss_payload)
         print(
             json.dumps(
                 {
@@ -141,6 +152,11 @@ def main() -> None:
     kite = build_kite_client()
     entry_order_id = place_order(kite, entry_payload)
     entry_status = wait_for_completion(kite, entry_order_id, args.entry_timeout, args.poll_seconds)
+
+    # LIMIT sells can fill above the limit price. Base automatic SL on the actual fill.
+    args.sell_price = completed_average_price(entry_status, args.sell_price)
+    stop_loss_payload = build_stop_loss_payload(args)
+    validate_prices(entry_payload, stop_loss_payload)
     stop_loss_order_id = place_order(kite, stop_loss_payload)
 
     print(

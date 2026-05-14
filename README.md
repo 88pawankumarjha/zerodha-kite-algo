@@ -64,6 +64,8 @@ For a long option trade, use the matching buy wrapper. It buys the option with a
 
 With buy price `15`, the SELL stop loss is trigger `12` and limit `11.95`.
 
+In live mode, automatic stop loss is calculated from the actual executed average price, not just the submitted limit price.
+
 ## Live Order Guard
 
 Live orders require all of these in `.env`:
