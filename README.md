@@ -30,6 +30,14 @@ python -m src.place_limit_order --symbol NIFTY00000CE --quantity 1 --price 1.0 -
 
 This prints the order payload and does not place a live order while `DRY_RUN=true`.
 
+## Stop-Loss Exit Check
+
+For a bought option position, place a protective sell SL-LIMIT order. The trigger is the stop-loss level; the limit price should normally be slightly below the trigger for a sell order so it has room to fill after triggering.
+
+```bash
+python -m src.place_stop_loss_order --exchange BFO --symbol SENSEX2651475400CE --quantity 20 --trigger-price 13 --limit-price 12.95 --side SELL
+```
+
 ## Live Order Guard
 
 Live orders require all of these in `.env`:
