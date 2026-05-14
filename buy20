@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "$#" -ne 3 ]; then
+  echo "Usage: ./buy20 SYMBOL QTY BUY_PRICE" >&2
+  echo "Example: ./buy20 SENSEX2651475400CE 20 15" >&2
+  exit 2
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+if [ -x ".venv/bin/python" ]; then
+  PYTHON=".venv/bin/python"
+else
+  PYTHON="python3"
+fi
+
+exec "$PYTHON" -m src.buy_option_with_sl \
+  --exchange BFO \
+  --symbol "$1" \
+  --qty "$2" \
+  --buy "$3" \
+  --stop-loss-percent 20
